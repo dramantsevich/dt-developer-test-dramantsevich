@@ -8,13 +8,16 @@ import com.vizor.test.model.ImageModel;
 
 public class GalleryView extends JPanel {
     private final JPanel galleryPanel;
+    private final JButton uploadButton;
 
     public GalleryView() {
         setLayout(new BorderLayout());
 
+        uploadButton = new JButton("Upload Images");
         galleryPanel = new JPanel(new FlowLayout());
 
         JPanel topPanel = new JPanel();
+        topPanel.add(uploadButton);
         add(topPanel, BorderLayout.NORTH);
         add(galleryPanel, BorderLayout.CENTER);
     }
@@ -27,5 +30,9 @@ public class GalleryView extends JPanel {
         }
         galleryPanel.revalidate();
         galleryPanel.repaint();
+    }
+
+    public JButton getUploadButton() {
+        return uploadButton;
     }
 }
