@@ -27,6 +27,10 @@ public class GalleryController {
 
     private void setupListeners() {
         galleryView.getUploadButton().addActionListener(e -> uploadImages());
+        galleryView.getSearchButton().addActionListener(e -> {
+            String searchTerm = galleryView.getSearchField().getText().trim();
+            searchImages(searchTerm);
+        });
     }
 
     private void loadImages() {
@@ -74,5 +78,15 @@ public class GalleryController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void searchImages(String name) {
+        List<ImageModel> filteredImages = new ArrayList<>();
+        for (ImageModel image : images) {
+            if (image.getName().toLowerCase().contains(name.toLowerCase())) {
+                filteredImages.add(image);
+            }
+        }
+        galleryView.displayImages(filteredImages);
     }
 }
