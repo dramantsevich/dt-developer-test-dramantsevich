@@ -81,14 +81,12 @@ public class GalleryController {
                     allImages.add(imageModel);
                     currentImages.add(imageModel);
 
-                    galleryView.showMessage(file.getName(), SUCCESS_UPLOAD_MESSAGE,
-                            SUCCESS_UPLOAD);
+                    galleryView.showMessage(file.getName() + " " + SUCCESS_UPLOAD_MESSAGE, SUCCESS_UPLOAD, JOptionPane.ERROR_MESSAGE);
                 } else {
-                    galleryView.showErrorMessage(file.getName(), ALREADY_EXIST_MESSAGE,
-                            ALREADY_EXIST);
+                    galleryView.showMessage(file.getName() + " " + ALREADY_EXIST_MESSAGE, ALREADY_EXIST, JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                galleryView.showErrorMessage(file.getName(), INVALID_FILE_MESSAGE, INVALID_FILE);
+                galleryView.showMessage(file.getName() + " " + INVALID_FILE_MESSAGE, INVALID_FILE, JOptionPane.ERROR_MESSAGE);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,6 +98,11 @@ public class GalleryController {
                 .filter(imageModel -> imageModel.getName().toLowerCase().contains(name.toLowerCase()))
                 .collect(Collectors.toList());
         currentPage = 0;
+
+        if(currentImages.isEmpty()) {
+            galleryView.showMessage(SEARCH_INVALID_RESULT_MESSAGE + " " + name, SEARCH_RESULT, JOptionPane.ERROR_MESSAGE);
+        }
+
         updateGallery();
     }
 

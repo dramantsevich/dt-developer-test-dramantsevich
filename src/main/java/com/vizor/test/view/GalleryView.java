@@ -73,11 +73,11 @@ public class GalleryView extends JPanel {
         pageInfoLabel.setText("Page " + (currentPage + 1) + " of " + totalPages);
     }
 
-    public void showErrorMessage(String fileName, String message, String title) {
-        JOptionPane.showMessageDialog(this, fileName + " " + message, title, JOptionPane.ERROR_MESSAGE);
-    }
+//    public void showErrorMessage(String fileName, String message, String title) {
+//        JOptionPane.showMessageDialog(this, fileName + " " + message, title, JOptionPane.ERROR_MESSAGE);
+//    }
 
-    public void showMessage(String fileName, String message, String title) {
-        JOptionPane.showMessageDialog(this, fileName + " " + message, title, JOptionPane.INFORMATION_MESSAGE);
+    public void showMessage(String message, String title, int messageType) {
+        JOptionPane.showMessageDialog(this, message, title, messageType);
     }
 }

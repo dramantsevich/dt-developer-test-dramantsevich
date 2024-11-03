@@ -7,4 +7,6 @@ public class MessageConstants {
     public static String ALREADY_EXIST_MESSAGE = " image already exists";
     public static String INVALID_FILE = "Invalid file";
     public static String INVALID_FILE_MESSAGE = "is not a valid image file!";
+    public static String SEARCH_RESULT = "Search Result";
+    public static String SEARCH_INVALID_RESULT_MESSAGE = "No images found for";
 }
