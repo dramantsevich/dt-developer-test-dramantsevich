@@ -2,6 +2,8 @@ package com.vizor.test.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import com.vizor.test.model.ImageModel;
@@ -43,10 +45,33 @@ public class GalleryView extends JPanel {
         galleryPanel.removeAll();
         for (ImageModel image : images) {
             JLabel label = new JLabel(image.getThumbnail());
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    showFullImage(image);
+                }
+            });
             galleryPanel.add(label);
         }
         galleryPanel.revalidate();
         galleryPanel.repaint();
+    }
+
+    private void showFullImage(ImageModel image) {
+        JDialog currentDialog = new JDialog();
+        currentDialog.setTitle(image.getName());
+        currentDialog.setModal(true);
+
+        JLabel imageLabel = new JLabel(image.getFullImage());
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // отступы
+        imagePanel.add(imageLabel, BorderLayout.CENTER);
+
+        currentDialog.add(imagePanel);
+        currentDialog.pack();
+
+        currentDialog.setLocationRelativeTo(this);
+        currentDialog.setVisible(true);
     }
 
     public JButton getUploadButton() {
@@ -72,10 +97,6 @@ public class GalleryView extends JPanel {
     public void updatePaginationInfo(int currentPage, int totalPages) {
         pageInfoLabel.setText("Page " + (currentPage + 1) + " of " + totalPages);
     }
-
-//    public void showErrorMessage(String fileName, String message, String title) {
-//        JOptionPane.showMessageDialog(this, fileName + " " + message, title, JOptionPane.ERROR_MESSAGE);
-//    }
 
     public void showMessage(String message, String title, int messageType) {
         JOptionPane.showMessageDialog(this, message, title, messageType);

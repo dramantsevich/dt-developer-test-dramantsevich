@@ -81,7 +81,7 @@ public class GalleryController {
                     allImages.add(imageModel);
                     currentImages.add(imageModel);
 
-                    galleryView.showMessage(file.getName() + " " + SUCCESS_UPLOAD_MESSAGE, SUCCESS_UPLOAD, JOptionPane.ERROR_MESSAGE);
+                    galleryView.showMessage(file.getName() + " " + SUCCESS_UPLOAD_MESSAGE, SUCCESS_UPLOAD, JOptionPane.DEFAULT_OPTION);
                 } else {
                     galleryView.showMessage(file.getName() + " " + ALREADY_EXIST_MESSAGE, ALREADY_EXIST, JOptionPane.ERROR_MESSAGE);
                 }
@@ -99,7 +99,7 @@ public class GalleryController {
                 .collect(Collectors.toList());
         currentPage = 0;
 
-        if(currentImages.isEmpty()) {
+        if (currentImages.isEmpty()) {
             galleryView.showMessage(SEARCH_INVALID_RESULT_MESSAGE + " " + name, SEARCH_RESULT, JOptionPane.ERROR_MESSAGE);
         }
 
