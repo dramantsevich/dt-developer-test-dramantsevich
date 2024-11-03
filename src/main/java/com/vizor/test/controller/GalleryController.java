@@ -57,11 +57,11 @@ public class GalleryController {
                         .anyMatch(imageModel -> imageModel.getName().equals(file.getName()));
 
                 if (!alreadyExists) {
+                    Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     ImageModel imageModel = new ImageModel(file.getName(), destinationFile);
                     images.add(imageModel);
-                    galleryView.displayImages(images);
 
-                    Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    galleryView.displayImages(images);
                     galleryView.showMessage(file.getName(), SUCCESS_UPLOAD_MESSAGE,
                             SUCCESS_UPLOAD);
                 } else {
