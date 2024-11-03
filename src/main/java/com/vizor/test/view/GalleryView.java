@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import com.vizor.test.constant.ViewConstants;
 import com.vizor.test.model.ImageModel;
 
 public class GalleryView extends JPanel {
@@ -13,7 +14,7 @@ public class GalleryView extends JPanel {
     public GalleryView() {
         setLayout(new BorderLayout());
 
-        uploadButton = new JButton("Upload Images");
+        uploadButton = new JButton(ViewConstants.BUTTON_UPLOAD);
         galleryPanel = new JPanel(new FlowLayout());
 
         JPanel topPanel = new JPanel();
@@ -34,5 +35,13 @@ public class GalleryView extends JPanel {
 
     public JButton getUploadButton() {
         return uploadButton;
+    }
+
+    public void showErrorMessage(String fileName, String message, String title) {
+        JOptionPane.showMessageDialog(this, fileName + " " + message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showMessage(String fileName, String message, String title) {
+        JOptionPane.showMessageDialog(this, fileName + " " + message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 }

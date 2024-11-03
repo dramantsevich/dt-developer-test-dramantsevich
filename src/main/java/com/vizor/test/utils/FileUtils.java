@@ -11,7 +11,6 @@ public class FileUtils {
         List<ImageModel> images = new ArrayList<>();
         File assetsFolder = new File(directoryPath);
 
-        // Проверяем, существует ли папка
         if (assetsFolder.exists() && assetsFolder.isDirectory()) {
             for (File file : assetsFolder.listFiles()) {
                 if (file.isFile() && isImageFile(file)) {
@@ -22,7 +21,7 @@ public class FileUtils {
         return images;
     }
 
-    private static boolean isImageFile(File file) {
+    public static boolean isImageFile(File file) {
         String name = file.getName().toLowerCase();
         return name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png");
     }
