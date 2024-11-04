@@ -1,36 +1,29 @@
 package com.vizor.test.controller;
 
-import com.vizor.test.constant.PathConstants;
 import com.vizor.test.model.ImageModel;
-import com.vizor.test.utils.FileUtils;
+import com.vizor.test.service.ImageService;
 import com.vizor.test.view.GalleryView;
 
 import javax.swing.*;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.vizor.test.constant.MessageConstants.*;
+import static com.vizor.test.constant.ViewConstants.IMAGES_PER_PAGE;
 
 public class GalleryController {
     private final GalleryView galleryView;
-    private final List<ImageModel> allImages;
-    private List<ImageModel> currentImages;
-
-
-    private static final int IMAGES_PER_PAGE = 8;
+    private final ImageService imageService;
+    private List<ImageModel> currentImages = new ArrayList<>();
     private int currentPage = 0;
 
-    public GalleryController(GalleryView galleryView) {
+    public GalleryController(GalleryView galleryView, ImageService imageService) {
         this.galleryView = galleryView;
-        this.allImages = new ArrayList<>();
-        this.currentImages = new ArrayList<>();
+        this.imageService = imageService;
+
         loadImages();
         setupListeners();
-        updateGallery(); // Отображаем начальную галерею
+        updateGallery();
     }
 
     private void setupListeners() {
@@ -41,69 +34,47 @@ public class GalleryController {
     }
 
     private void loadImages() {
-        allImages.addAll(FileUtils.loadImagesFromAssets(PathConstants.DIRECTORY_PATH));
-        currentImages.addAll(allImages);
+        currentImages = imageService.getAllImages();
     }
 
     private void updateGallery() {
-        int startIndex = currentPage * IMAGES_PER_PAGE;
-        int endIndex = Math.min(startIndex + IMAGES_PER_PAGE, currentImages.size());
-        List<ImageModel> imagesToDisplay = currentImages.subList(startIndex, endIndex);
+        List<ImageModel> imagesToDisplay = imageService.getImagesForDisplay(currentImages, currentPage, IMAGES_PER_PAGE);
+
+        if (imagesToDisplay.isEmpty()) {
+            galleryView.showMessage(ERROR_UPDATE_MESSAGE, ERROR_UPDATE, JOptionPane.ERROR_MESSAGE);
+        }
+
         galleryView.displayImages(imagesToDisplay);
         updatePagination();
     }
 
     private void uploadImages() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setMultiSelectionEnabled(true);
+        List<String> uploadMessages = imageService.uploadImages();
 
-        int returnValue = fileChooser.showOpenDialog(galleryView);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File[] selectedFiles = fileChooser.getSelectedFiles();
-            for (File file : selectedFiles) {
-                uploadImage(file);
+        currentImages = imageService.getAllImages();
+
+        for (String message : uploadMessages) {
+            if(message.contains("Invalid") || message.contains("exists"))
+            {
+                galleryView.showMessage(message, ERROR_UPLOAD, JOptionPane.ERROR_MESSAGE);
             }
-            updateGallery();
-        }
-    }
-
-    private void uploadImage(File file) {
-        File destinationFile = new File(PathConstants.DIRECTORY_PATH, file.getName());
-
-        try {
-            if (FileUtils.isImageFile(file)) {
-                boolean alreadyExists = allImages.stream()
-                        .anyMatch(imageModel -> imageModel.getName().equals(file.getName()));
-
-                if (!alreadyExists) {
-                    Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    ImageModel imageModel = new ImageModel(file.getName(), destinationFile);
-                    allImages.add(imageModel);
-                    currentImages.add(imageModel);
-
-                    galleryView.showMessage(file.getName() + " " + SUCCESS_UPLOAD_MESSAGE, SUCCESS_UPLOAD, JOptionPane.DEFAULT_OPTION);
-                } else {
-                    galleryView.showMessage(file.getName() + " " + ALREADY_EXIST_MESSAGE, ALREADY_EXIST, JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                galleryView.showMessage(file.getName() + " " + INVALID_FILE_MESSAGE, INVALID_FILE, JOptionPane.ERROR_MESSAGE);
+            else {
+                galleryView.showMessage(message, SUCCESS_UPLOAD, JOptionPane.NO_OPTION);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void searchImages(String name) {
-        currentImages = allImages.stream()
-                .filter(imageModel -> imageModel.getName().toLowerCase().contains(name.toLowerCase()))
-                .collect(Collectors.toList());
-        currentPage = 0;
-
-        if (currentImages.isEmpty()) {
-            galleryView.showMessage(SEARCH_INVALID_RESULT_MESSAGE + " " + name, SEARCH_RESULT, JOptionPane.ERROR_MESSAGE);
         }
 
         updateGallery();
+    }
+
+    public void searchImages(String name) {
+        currentImages = imageService.searchImages(name);
+        currentPage = 0;
+
+        if (currentImages.isEmpty()) {
+            galleryView.showMessage(ERROR_SEARCH_RESULT_MESSAGE + " " + name, SEARCH_RESULT, JOptionPane.ERROR_MESSAGE);
+        } else {
+            updateGallery();
+        }
     }
 
     private void nextPage() {

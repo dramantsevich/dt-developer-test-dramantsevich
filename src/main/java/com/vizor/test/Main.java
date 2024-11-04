@@ -2,24 +2,26 @@ package com.vizor.test;
 
 import com.vizor.test.constant.ViewConstants;
 import com.vizor.test.controller.GalleryController;
+import com.vizor.test.service.ImageService;
 import com.vizor.test.view.GalleryView;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 
-public class Main {
-    private static final int WIDTH = 1024;
-    private static final int HEIGHT = 768;
+import static com.vizor.test.constant.ViewConstants.HEIGHT;
+import static com.vizor.test.constant.ViewConstants.WIDTH;
 
+public class Main {
     public void run() {
         JFrame frame = new JFrame(ViewConstants.WINDOW_TITLE);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         frame.setLocationRelativeTo(null);
 
+        ImageService imageService = new ImageService();
         GalleryView galleryView = new GalleryView();
-        GalleryController galleryController = new GalleryController(galleryView);
+        GalleryController galleryController = new GalleryController(galleryView, imageService);
 
         frame.add(galleryView);
         frame.setVisible(true);
